@@ -1,0 +1,14 @@
+logs
+*.log
+pids
+*.pid
+*.seed
+lib-cov
+coverage
+.lock-wscript
+node_modules
+.idea
+*.iml
+lib
+test/playground
+bundle*
