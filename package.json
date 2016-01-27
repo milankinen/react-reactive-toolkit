@@ -4,13 +4,13 @@
   "description": "Universal React reactive programming toolkit",
   "main": "dist/react.reactive.min.js",
   "scripts": {
-    "prepublish": "npm run dist",
+    "prepublish": "npm test && npm run build",
     "build": "npm run build:debug && npm run build:minified",
     "build:debug": "npm run webpack -- --debug --output-filename dist/react.reactive.js ./src/index.js",
     "build:minified": "NODE_ENV=production npm run webpack -- --optimize-minimize --output-filename dist/react.reactive.min.js ./src/index.js",
-    "webpack": "webpack --module-bind 'js=babel' --output-library react.reactive --output-library-target umd",
+    "webpack": "webpack --module-bind 'js=babel' --output-library ReactReactiveToolkit --output-library-target umd",
     "test": "npm run lint",
-    "lint": "eslint src test examples"
+    "lint": "eslint src"
   },
   "repository": {
     "type": "git",
@@ -31,6 +31,8 @@
     "eslint": "^1.10.3",
     "eslint-plugin-react": "^3.16.1",
     "faucet": "^0.0.1",
+    "react": "^0.14.6",
+    "react-dom": "^0.14.6",
     "tape": "^4.4.0",
     "webpack": "^1.12.12"
   }
