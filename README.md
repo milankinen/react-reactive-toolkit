@@ -8,7 +8,7 @@ any reactive library that is compatible with
 
 [![Build Status](https://img.shields.io/travis/milankinen/react-reactive-toolkit.svg?style=flat-square)](https://travis-ci.org/milankinen/react-reactive-toolkit)
 [![NPM Version](https://img.shields.io/npm/v/react.reactive.svg?style=flat-square)](https://www.npmjs.com/package/react.reactive)
-
+[![Join Gitter Chat!](https://img.shields.io/gitter/room/nwjs/nw.js.svg?style=flat-square)](https://gitter.im/milankinen/react-reactive-toolkit)
 
 ## API
 
