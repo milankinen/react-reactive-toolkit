@@ -1,5 +1,7 @@
 # React Reactive Programming Toolkit
 
+[![Join the chat at https://gitter.im/milankinen/react-reactive-toolkit](https://badges.gitter.im/milankinen/react-reactive-toolkit.svg)](https://gitter.im/milankinen/react-reactive-toolkit?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Inspired by [bacon.react.html](https://github.com/polytypic/bacon.react.html),
 [react-combinators](https://github.com/polytypic/bacon.react.html) and
 [Cycle.js](http://cycle.js.org/) but has no external dependencies (except React) and works with
