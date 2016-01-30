@@ -2,13 +2,10 @@
   "name": "react.reactive",
   "version": "0.1.0",
   "description": "Universal React reactive programming toolkit",
-  "main": "dist/react.reactive.min.js",
+  "main": "lib/index.js",
   "scripts": {
     "prepublish": "npm test && npm run build",
-    "build": "npm run build:debug && npm run build:minified",
-    "build:debug": "npm run webpack -- --debug --output-filename dist/react.reactive.js ./src/index.js",
-    "build:minified": "NODE_ENV=production npm run webpack -- --optimize-minimize --output-filename dist/react.reactive.min.js ./src/index.js",
-    "webpack": "webpack --module-bind 'js=babel' --output-library ReactReactiveToolkit --output-library-target umd",
+    "build": "rm -rf lib && babel -d lib src",
     "test": "npm run lint",
     "lint": "eslint src"
   },
@@ -20,7 +17,7 @@
   "author": "Matti Lankinen <m.lankinen@iki.fi> (https://github.com/milankinen)",
   "license": "MIT",
   "devDependencies": {
-    "babel": "^6.3.26",
+    "babel-cli": "^6.4.5",
     "babel-core": "^6.4.5",
     "babel-eslint": "^5.0.0-beta6",
     "babel-loader": "^6.2.1",
@@ -33,7 +30,6 @@
     "faucet": "^0.0.1",
     "react": "^0.14.6",
     "react-dom": "^0.14.6",
-    "tape": "^4.4.0",
-    "webpack": "^1.12.12"
+    "tape": "^4.4.0"
   }
 }
