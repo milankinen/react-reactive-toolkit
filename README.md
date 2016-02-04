@@ -82,40 +82,60 @@ const Example = ({date}) => {
 
 ### Creating observables from DOM events
 
-If you want to listen DOM event from component's child nodes, you can wrap your
-(pure) component with `withEvents` helper function. This function adds a new 
-value, `events` into your component's props. This value is actually a function which
-takes a CSS selector and returns an `EventTarget` object that can be subscribed 
-with your Observable library  (`fromEventTarget`, `fromEvent`, etc.).
+#### Emitting events
+
+Reactive components can declare the events they send by using `emits` property.
+The property takes one JSON object that has event types as its keys and emitted
+event names as its values, e.g.
+
+```javascript
+<R.button emits={{click: "my-btn-clicked"}}>My Button</R.button>
+<R.input emits={{change: "event-name-can-be-anything"}} />
+```
 
 All React events (including `onChange`) are supported but they must be listened
 by using their lowercase name without *on* prefix: e.g. `onChange => change` and
 `onKeyDown => keydown`
 
+Also custom event types work but they must be referenced by their original name,
+e.g.
+```javascript
+const RDatePicker = R(DatePicker)
+<RDatePicker emits={{onDateChange: "date-changed"}} />
+```
+
+#### Observing events
+
+All events that are emitted from reactive components can be observed by any
+parent (or ancestor) component. When you make your component reactive with the
+`R` function, it adds an additional `events` property that is an event emitter
+/ event target -- this means that you can use your observable library's utility
+functions to subscribe to the given event target `fromEventTarget`, `fromEvent`, 
+etc.)
+
 ```javascript
 import {Observable} from "rx"
-import R, {withEvents} from "react.reactive"
+import R from "react.reactive"
 
 
-const Example = withEvents(({events}) => {
-  const inc$ = Observable.fromEvent(events(".inc"), "click")
-    .map(() => +1)
-  const dec$ = Observable.fromEvent(events(".dec"), "click")
-    .map(() => -1)
-
+const Counter = R(({events}) => {
+  const inc$ = Observable.fromEvent(events, "inc-click").map(() => +1)
+  const dec$ = Observable.fromEvent(events, "dec-click").map(() => -1)
   const counter$ =
     inc$.merge(dec$)
       .startWith(0)
       .scan((val, d) => val + d, 0)
-      
+      .shareReplay()
+
   return (
     <div>
-      <R.h1 style={style$}>Counter {counter$}</R.h1>
-      <button className="inc">++</button>
-      <button className="dec">--</button>
+      <R.h1>Counter {counter$}</R.h1>
+      <R.button emits={{click: "inc-click"}}>++</R.button>
+      <R.button emits={{click: "dec-click"}}>--</R.button>
     </div>
   )
 })
+
 ```
 
 
