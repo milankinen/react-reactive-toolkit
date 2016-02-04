@@ -7,14 +7,14 @@ import {render} from "react-dom"
 const $app =
   document.getElementById("app")
 
-// withEvents provides "events" property that makes possible to
+// Reactive component provides "events" property that makes possible to
 // listen and subscribe to sub-tree DOM events
-const App = withEvents(({events}) => {
-  const inc$ = Observable.fromEvent(events(".inc"), "click").map(() => +1)
-  const dec$ = Observable.fromEvent(events(".dec"), "click").map(() => -1)
+const App = R(({events}) => {
+  const inc$ = Observable.fromEvent(events, "inc-click").map(() => +1)
+  const dec$ = Observable.fromEvent(events, "dec-click").map(() => -1)
 
   // also React onChange is supported
-  const text$ = Observable.fromEvent(events("input"), "change")
+  const text$ = Observable.fromEvent(events, "text-change")
     .map(e => e.target.value)
     .startWith("tsers")
     .shareReplay()
@@ -30,12 +30,16 @@ const App = withEvents(({events}) => {
       .map(([text, counter]) => text.length === counter ? "red" : "black")
       .map(color => ({color}))
 
+  // You can emit events from reactive components by giving an object
+  // containing the event types as object keys and emitted event names
+  // as object values - when event occurs, it'll be emitted to parent
+  // (or grand parent) component's "events" emitter
   return (
     <div>
       <R.h1 style={style$}>Counter {counter$}</R.h1>
-      <button className="inc">++</button>
-      <button className="dec">--</button>
-      <R.input value={text$} />
+      <R.button emits={{click: "inc-click"}}>++</R.button>
+      <R.button emits={{click: "dec-click"}}>--</R.button>
+      <R.input emits={{change: "text-change"}} value={text$} />
     </div>
   )
 })
