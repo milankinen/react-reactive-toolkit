@@ -50,9 +50,5 @@ ALL.forEach(eventType => {
 
 
 export const typeByName = name => {
-  const type = BY_NAME[name]
-  if (!type) {
-    throw new Error("Unsupported react.reactive event type '" + name + "' :(")
-  }
-  return type
+  return BY_NAME[name]
 }

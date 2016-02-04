@@ -1,21 +1,32 @@
 import React from "react"
 import Map from "./util/map"
+import EventEmitter from "./util/EventEmitter"
 import toBindings from "./toBindings"
+import {isFunction, keys} from "./util/base"
+import {typeByName} from "./eventTypeMapping"
 
 export default Class => React.createClass({
 
+  ...createContext(Class),
+
   displayName: `R.${Class.displayName || Class.name || Class.toString()}`,
+
 
   getInitialState() {
     return {
       bindingMap: new Map(),
       waiting: new Map(),
-      updated: 0
+      updated: 0,
+      eventSink: new EventSink(this.context && this.context._eventSink)
     }
   },
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps, nextContext) {
     this._subscribe(nextProps)
+    const nextSink = nextContext && nextContext._eventSink
+    if (nextSink !== this.state.eventSink.parent) {
+      this.setState({eventSink: new EventSink(nextSink)})
+    }
   },
 
   componentWillMount() {
@@ -33,6 +44,8 @@ export default Class => React.createClass({
       b.dispose()
     }
 
+    this.state.eventSink.emitter = null
+
     this.setState({
       bindingMap: new Map(),
       waiting: new Map(),
@@ -42,8 +55,8 @@ export default Class => React.createClass({
   },
 
   render() {
-    const {props} = this.state
-    return props ? React.createElement(Class, props, props.children) : null
+    const {props, eventSink} = this.state
+    return props ? React.createElement(Class, bindEventSink(Class, eventSink, props), props.children) : null
   },
 
   _onObsNext(obs) {
@@ -107,3 +120,51 @@ export default Class => React.createClass({
     }
   }
 })
+
+function EventSink(parent) {
+  this.parent = parent
+}
+
+EventSink.prototype.next = function(name, event) {
+  this.emitter && this.emitter.emit(name, [ event ])
+  this.parent && this.parent.next(name, event)
+}
+
+EventSink.prototype.newEmitter = function() {
+  this.emitter = new EventEmitter()
+  return this.emitter
+}
+
+function bindEventSink(Class, sink, props) {
+  const clone = {...props}
+  keys(props.emits || {}).forEach(key => {
+    const type = typeByName(key) || key
+    const name = props.emits[key]
+    clone[type] = e => sink.next(name, e)
+  })
+  if (isFunction(Class)) {
+    clone.events = sink.newEmitter()
+  }
+  return clone
+}
+
+
+function createContext(Class) {
+  let ctx = {
+    contextTypes: {
+      _eventSink: React.PropTypes.object
+    }
+  }
+  if (isFunction(Class)) {
+    ctx = {
+      ...ctx,
+      childContextTypes: {
+        _eventSink: React.PropTypes.object
+      },
+      getChildContext() {
+        return {_eventSink: this.state.eventSink}
+      }
+    }
+  }
+  return ctx
+}

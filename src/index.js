@@ -1,5 +1,4 @@
 import R from "./fromClass"
-import we from "./withEvents"
 
 const tagNames =
   "a,abbr,address,area,article,aside,audio,b,base,bdi,bdo,blockquote,body,br,button,canvas,caption,cite," +
@@ -15,6 +14,4 @@ tagNames.split(",").forEach(tag => {
 
 
 export default R
-
-export const withEvents = we
 
