@@ -23,7 +23,7 @@
   "devDependencies": {
     "babel-cli": "6.4.5",
     "babel-core": "6.4.5",
-    "babel-eslint": "5.0.0-beta7",
+    "babel-eslint": "5.0.0-beta9",
     "babel-preset-es2015": "6.3.13",
     "babel-preset-react": "6.3.13",
     "babel-preset-stage-0": "6.3.13",
