@@ -55,8 +55,23 @@ export default Class => React.createClass({
   },
 
   render() {
+    const {props} = this.state
+    return props ? this.renderInner() : null
+  },
+
+  renderInner() {
     const {props, eventSink} = this.state
-    return props ? React.createElement(Class, bindEventSink(Class, eventSink, props), props.children) : null
+    const newProps = bindEventSink(Class, eventSink, props)
+    if (newProps.onMount || newProps.onUnmount) {
+      newProps.ref = node => {
+        if (node === null && newProps.onUnmount) {
+          newProps.onUnmount(node)
+        } else if (node !== null && newProps.onMount) {
+          newProps.onMount(node)
+        }
+      }
+    }
+    return React.createElement(Class, newProps, props.children)
   },
 
   _onObsNext(obs) {

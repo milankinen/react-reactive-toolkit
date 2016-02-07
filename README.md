@@ -80,6 +80,12 @@ const Example = ({date}) => {
 }
 ```
 
+### Mounting / unmounting hooks
+
+Because `ref` can't be used with React class components, reactive components
+signal their mounting and un-mounting with `onMount` and `onUnmount` lifecycle
+hooks.
+
 ### Creating observables from DOM events
 
 #### Emitting events
