@@ -10,6 +10,64 @@ any reactive library that is compatible with
 [![NPM Version](https://img.shields.io/npm/v/react.reactive.svg?style=flat-square)](https://www.npmjs.com/package/react.reactive)
 [![Join Gitter chat](https://img.shields.io/gitter/room/nwjs/nw.js.svg?style=flat-square)](https://gitter.im/milankinen/react-reactive-toolkit)
 
+## Example
+
+```javascript
+import React from "react"
+import Kefir from "kefir"
+import R from "react.reactive"
+import {render} from "react-dom"
+
+
+const searchUrl = q =>
+  `https://api.github.com/search/repositories?q=${q}&sort=stars&order=desc`
+
+const GithubSearch = R(({events}) => {
+  const searchText =
+    Kefir.fromEvents(events, "searchText:changed")
+      .map(e => e.target.value)
+      .merge(Kefir.fromEvents(events, "searchText:clear").map(() => ""))
+      .merge(Kefir.constant(""))  // initial value
+      .toProperty()
+
+  const repos =
+    searchText
+      .debounce(300)
+      .map(encodeURIComponent)
+      .flatMapLatest(q => q.length < 3
+        ? Kefir.constant({items: []})
+        : Kefir.fromPromise(fetch(searchUrl(q)).then(req => req.json()))
+      )
+      .map(res => res.items.map(it => ({
+        id: it.id,
+        name: it.full_name,
+        stars: it.stargazers_count
+      })))
+
+  return (
+    <div>
+      <h1>Github Repository search</h1>
+      <R.input placeholder="Repository name"
+               emits={{change: "searchText:changed"}}
+               value={searchText} />
+      <R.button emits={{click: "searchText:clear"}}
+                disabled={searchText.map(t => t.length === 0)}>
+        Reset
+      </R.button>
+      <R.ul>
+        {repos.map(repos => repos.map(({id, name, stars}) =>
+          <li key={id}>
+            {name} (stars: {stars})
+          </li>
+        ))}
+      </R.ul>
+    </div>
+  )
+})
+
+render(<GithubSearch />, document.getElementById("app"))
+```
+
 ## API
 
 To use `react.reactive`, you must install it first with npm
