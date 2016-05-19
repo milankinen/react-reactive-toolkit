@@ -1,6 +1,6 @@
 {
   "name": "react.reactive",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Universal React reactive programming toolkit",
   "main": "lib/index.js",
   "scripts": {
